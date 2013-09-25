@@ -25,7 +25,7 @@ from sickbeard.providers.generic import GenericProvider
 from sickbeard import encodingKludge as ek
 from sickbeard.name_parser.parser import NameParser, InvalidNameException
 
-MAX_DB_VERSION = 12
+MAX_DB_VERSION = 13
 
 
 class MainSanityCheck(db.DBSanityCheck):
@@ -666,3 +666,12 @@ class Add1080pAndRawHDQualities(RenameSeasonFolders):
         # cleanup and reduce db if any previous data was removed
         logger.log(u"Performing a vacuum on the database.", logger.DEBUG)
         self.connection.action("VACUUM")
+
+
+class AddDvdOrderOption(UpgradeHistoryForGenericProviders):
+    def test(self):
+        return self.checkDBVersion() >= 13
+
+    def execute(self):
+        self.connection.action("ALTER TABLE tv_shows ADD dvdorder NUMERIC")
+        self.incDBVersion()

@@ -2320,7 +2320,7 @@ class Home:
         return result['description'] if result else 'Episode not found.'
 
     @cherrypy.expose
-    def editShow(self, show=None, location=None, anyQualities=[], bestQualities=[], flatten_folders=None, paused=None, directCall=False, air_by_date=None, tvdbLang=None):
+    def editShow(self, show=None, location=None, anyQualities=[], bestQualities=[], flatten_folders=None, paused=None, directCall=False, air_by_date=None, dvdorder=None, tvdbLang=None):
 
         if show == None:
             errString = "Invalid show ID: "+str(show)
@@ -2353,6 +2353,11 @@ class Home:
             flatten_folders = 0
 
         logger.log(u"flatten folders: "+str(flatten_folders))
+
+        if dvdorder == "on":
+            dvdorder = 1
+        else:
+            dvdorder = 0
 
         if paused == "on":
             paused = 1
@@ -2397,6 +2402,7 @@ class Home:
             showObj.paused = paused
             showObj.air_by_date = air_by_date
             showObj.lang = tvdb_lang
+            showObj.dvdorder = dvdorder
 
             # if we change location clear the db of episodes, change it, write to db, and rescan
             if os.path.normpath(showObj._location) != os.path.normpath(location):
